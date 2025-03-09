@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Driven CRM Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/plotly.js-dist@2.5.1/plotly.min.js"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .card-body {
+            padding: 2rem;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .graph-container {
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1 class="display-4">AI-Driven CRM Dashboard</h1>
+        <p class="lead">Welcome to the interactive CRM dashboard with customer insights and sales forecasts.</p>
+    </div>
+
+    <!-- Customer Segments -->
+    <div class="row graph-container">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    Customer Segments (Clustering)
+                </div>
+                <div class="card-body">
+                    <div id="customer-segment-graph">
+                        {{ graph_html_segment | safe }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sales by Customer -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    Sales by Customer
+                </div>
+                <div class="card-body">
+                    <div id="sales-forecast-graph">
+                        {{ graph_html_sales | safe }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Sections -->
+    <div class="row graph-container">
+        <!-- Sales Trends -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    Sales Trends Over Time
+                </div>
+                <div class="card-body">
+                    <div id="sales-trends-graph">
+                        {{ graph_html_sales_trends | safe }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customer Lifetime Value -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    Customer Lifetime Value (CLV)
+                </div>
+                <div class="card-body">
+                    <div id="clv-graph">
+                        {{ graph_html_clv | safe }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Products -->
+    <div class="row graph-container">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    Top 10 Products by Sales
+                </div>
+                <div class="card-body">
+                    <div id="top-products-graph">
+                        {{ graph_html_top_products | safe }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product-wise Sales Distribution -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    Product-wise Sales Distribution
+                </div>
+                <div class="card-body">
+                    <div id="product-sales-graph">
+                        {{ graph_html_product_sales | safe }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Customer Demographics -->
+    <div class="row graph-container">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    Customer Sales by Country
+                </div>
+                <div class="card-body">
+                    <div id="country-sales-graph">
+                        {{ graph_html_country_sales | safe }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Churn Prediction Form -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    Churn Prediction
+                </div>
+                <div class="card-body">
+                    <h5>Predict Customer Churn</h5>
+                    <form id="churn-form">
+                        <div class="form-group">
+                            <label for="customerID">Enter Customer ID:</label>
+                            <input type="number" class="form-control" id="customerID" placeholder="Customer ID">
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="predictChurn()">Predict Churn</button>
+                    </form>
+                    <div id="churn-result" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // Churn Prediction function
+    function predictChurn() {
+        let customerID = document.getElementById('customerID').value;
+        fetch('/predict_churn', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ "CustomerID": customerID })
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('churn-result').innerHTML = 'Churn Prediction: ' + (data.churn_prediction ? 'Yes' : 'No');
+        });
+    }
+</script>
+
+</body>
+</html>
